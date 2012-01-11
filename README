@@ -1,0 +1,3 @@
+package_get.py		Poll for available update bundles and optionally download files associated with a download.
+qcfm_parse.py		Parse a QCFM update bundle, "inflating" each QCFP image from the QCFM container.
+ifs_parse.py		Parse an IFS image. Must be run from a QNX environment, as it depends on dumpifs.
