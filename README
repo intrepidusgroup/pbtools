@@ -1,6 +1,6 @@
 PlayBook Tools...
 
-package_get.py		Poll for available update bundles and optionally download files associated with a download.
+package_get.py		Poll for available update bundles and optionally download files associated with a bundle.
 
 qcfm_parse.py		Parse a QCFM update bundle, "inflating" each QCFP image from the QCFM container.
 
