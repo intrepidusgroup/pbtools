@@ -56,7 +56,7 @@ def pollPackages(platformVer,reportError=True):
 		else:
 			return None, None
 	urlBase = re.search(r"url=\"([a-zA-Z0-9\.:/_]*)\"", fileList).group(1)
-	urlFiles = re.findall(r"module name=\"([a-zA-Z0-9\._]*)\"",fileList)
+	urlFiles = re.findall(r"name=\"([a-zA-Z0-9\._]*)\"",fileList)
 	conn.close
 	return urlBase, urlFiles
 
