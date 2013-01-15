@@ -5,6 +5,7 @@ import urllib2
 import re
 import sys
 from optparse import OptionParser
+import xml.etree.ElementTree as ET
 
 URL = "playbook.websl.blackberry.com"
 URI = "/cs/cs"
@@ -50,13 +51,19 @@ def pollPackages(platformVer,reportError=True):
 	if response.status != 200:
 		sys.exit("Bad response code: " + response.status + " - " + response.reason + "; I'm not sure what to do.")
 	fileList = response.read()
+	root = ET.fromstring(fileList)
+	if root.find('.//errorResponse'):
+		sys.exit("an error!")
 	if re.search(r"<errorResponse>", fileList):
 		if reportError:
-			sys.exit("Problems retrieving package specified: " + re.search(r"<code error=\"([0-9]*)\"/>", fileList).group(1))
+			sys.exit("Problems retrieving package specified: " + root.find('.//code').get('error'))
 		else:
 			return None, None
-	urlBase = re.search(r"url=\"([a-zA-Z0-9\.:/_]*)\"", fileList).group(1)
-	urlFiles = re.findall(r"name=\"([a-zA-Z0-9\._]*)\"",fileList)
+	urlBase = root.find('.//packagedb').get('url')
+	urlFiles = []
+        for package in root.findall('.//package'):
+                for mod in package.find('modules'):
+                        urlFiles.append( mod.get('name'))
 	conn.close
 	return urlBase, urlFiles
 
@@ -98,7 +105,6 @@ def bruteVersions(bundleBase):
 			print "doesn't exist."
 	return versionsExist
 
-
 parser = OptionParser()
 parser.add_option("-l", "--list", action="store_true", dest="listBundles", default=False, help="List available package bundles")
 parser.add_option("-b", "--bundle", action="store", dest="bundleVersion", help="Specify the bundle version that you wish to download")
@@ -135,5 +141,4 @@ elif options.bruteForce:
 		print "The following versions exist:"
 		for version in versions:
 			print version
-
 
